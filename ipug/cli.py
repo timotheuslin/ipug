@@ -5,7 +5,10 @@ import sys
 import time
 import click
 
-from ipug.ipug import main  as ipug_main
+try:
+    from ipug.ipug import main as ipug_main
+except ImportError:
+    from ipug import main as ipug_main
 
 
 #@click.command()
