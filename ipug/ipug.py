@@ -352,11 +352,13 @@ def setup_codetree(codetree):
         if not os.path.exists(local_dir):
             os.makedirs(local_dir)
 
-        nsource = getattr(node, 'source', None)
-        nsource_url = getattr(nsource, 'url', None)
-        if (nsource is None) or (nsource_url is None):
+        nsource = node.get('source', None)
+        if nsource is None:
             return r
-        nsource_signature = getattr(nsource, 'signature', 'master')
+        nsource_url = nsource.get('url', None)
+        if nsource_url is None:
+            return r
+        nsource_signature = nsource.get('signature', 'master')
         if not nsource_signature:
             nsource_signature = 'master'
         if not os.path.exists(dot_git):
@@ -385,7 +387,7 @@ def platform_dsc(platform, components, workspace):
     """generate a platform's dsc file."""
 
     dsc_path = abs_path(platform['path'], workspace)
-    print('PLATFORM_DSC = %s' % dsc_path)
+    bowwow('PLATFORM_DSC = %s' % dsc_path)
     if not platform.get('update', False):
         return
     sections = ['Defines', 'Components']
@@ -424,7 +426,7 @@ def component_inf(components, workspace):
     for comp in components:
         cfile = []
         inf_path = abs_path(comp.get('path', ''), workspace)
-        print('COMPONENT: %s' % inf_path)
+        bowwow('COMPONENT: %s' % inf_path)
         if not comp.get('update', False):
             continue
         defines = comp.get('Defines', '')
