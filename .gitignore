@@ -1,0 +1,6 @@
+.tox
+build
+dist
+ipug.egg-info
+*.pyc
+__pycache__

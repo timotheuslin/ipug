@@ -1,6 +1,6 @@
 #
 # -*- coding: utf-8 -*-
-# pylint: disable=line-too-long, wildcard-import
+# pylint: disable=invalid-name, line-too-long, too-many-nested-blocks, too-many-branches, too-many-locals
 #
 # (c) 2019 Timothy Lin <timothy.gh.lin@gmail.com>, BSD 3-Clause License.
 #
@@ -43,7 +43,7 @@ pTARGET_TXT = {}
 ORIGINAL_SYS_PATH = sys.path[:]
 try:
     sys.path = [os.getcwd()] + sys.path
-    #BUGBUG: Here is a potential vulnerable privilege propagation when importing a local python file.
+    # BUGBUG: Here is a potential vulnerable privilege propagation when importing a local python file.
     import project
     pCODETREE = getattr(project, 'CODETREE', {})
     pPLATFORM = getattr(project, 'PLATFORM', {})
@@ -51,11 +51,12 @@ try:
     pCOMPONENT = getattr(project, 'COMPONENT', {})
     pTARGET_TXT = getattr(project, 'TARGET_TXT', {})
     for dv in dir(project):
-        if dv.startswith('DEFAULT_'):
+        if not dv.startswith('DEFAULT_'):
             continue
         locals()[dv] = getattr(project, dv)
 except ImportError:
-    print('Ingore missing project.py.')
+    # print('Ingore missing project.py.')
+    pass
 sys.path = ORIGINAL_SYS_PATH
 
 
