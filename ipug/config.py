@@ -9,7 +9,7 @@
 The basic/default configuration file for PUG.
 """
 
-__all__ = ['WORKSPACE', 'CODETREE', 'TARGET_TXT']
+__all__ = ['WORKSPACE', 'CODETREE', 'TARGET_TXT', 'PLATFORM', 'COMPONENT']
 
 import os
 import sys
@@ -43,7 +43,7 @@ pTARGET_TXT = {}
 ORIGINAL_SYS_PATH = sys.path[:]
 try:
     sys.path = [os.getcwd()] + sys.path
-    # BUGBUG: Here is a potential vulnerable privilege propagation when importing a local python file.
+    # WARNING: Here is actually a potential vulnerability with unbounded privilege propagation when importing a local python file.
     import project
     pCODETREE = getattr(project, 'CODETREE', {})
     pPLATFORM = getattr(project, 'PLATFORM', {})
