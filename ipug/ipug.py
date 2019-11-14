@@ -313,7 +313,7 @@ def setup_env_vars(workspace, codetree):
 
 
 def build_basetools(verbose=0):
-    """build the C-lang executables in Basetools.
+    """build the C-lang executable binaries in Basetools.
     Use: sys.argv[1]: 'clean' """
     home_dir = os.environ['EDK_TOOLS_PATH']
     cmds = [
@@ -385,7 +385,7 @@ def setup_codetree(codetree):
         return r
 
     r0, r1, r2 = _get_code(codetree['edk2'])
-    for c in codetree:
+    for c in sorted([codetree[t]['path'] for t in codetree]):
         if c == 'edk2':
             continue
         s = _get_code(codetree[c])
@@ -459,7 +459,7 @@ def component_inf(components, workspace):
 def build():
     """0. prepare the UDK code tree.
        1. setup environment variables.
-       2. build C-lang executables in BaseTools.
+       2. build C-lang executable binaries in BaseTools.
        3. UDK build."""
 
     workspace = os.path.abspath(config.WORKSPACE['path'])
@@ -512,7 +512,7 @@ def build():
 def main():
     """main"""
     if config.project is None:
-        bowwow('Ingoring the missing project.py.')
+        bowwow('Ignoring the missing project.py.')
     start_time = time.time()
     ret = build()
     elapsed_time = time.gmtime(int(round(time.time() - start_time)))
