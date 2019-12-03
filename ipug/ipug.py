@@ -369,13 +369,11 @@ def setup_codetree(codetree):
             r = run(['git', 'clone', nsource_url, local_dir], local_dir, verbose=True)
             if r[0]:
                 return r
-        # bugbug
-        #r = run(['git', 'checkout', 'master'], local_dir, verbose=True)
-        #if r[0]:
-        #    return r
-        #r = run(['git', 'pull'], local_dir, verbose=True)
-        #if r[0]:
-        #    return r
+        pwdpopd(local_dir)
+        r = run(['git', 'pull', nsource_url], local_dir, verbose=True)
+        pwdpopd()
+        if r[0]:
+            return r
         
         r = run(['git', 'checkout', nsource_signature], local_dir, verbose=True)
         if r[0]:
@@ -385,7 +383,7 @@ def setup_codetree(codetree):
         return r
 
     r0, r1, r2 = _get_code(codetree['edk2'])
-    for c in sorted([codetree[t]['path'] for t in codetree]):
+    for c in codetree:
         if c == 'edk2':
             continue
         s = _get_code(codetree[c])
