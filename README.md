@@ -1,7 +1,7 @@
 
 pug
 ==
-**Pug, the UDK Guide dog** that reduces the code maintenance complexity and simplifies the build process of UDK.
+**Pug, the Udk Guidedog** that reduces the code maintenance complexity and simplifies the build process of UDK.
 
 This is a Python/Pypi package.
 
@@ -14,10 +14,10 @@ This is a Python/Pypi package.
 5. `python setup.py sdist bdist_wheel`
 6. `pip install --user dist/ipug-THE-LATEST-VERSION.tar.gz` e.g. `pip install --user dist/ipug-0.1.5.tar.gz`
 
-# Upload to Pypi
+## Upload to Pypi
 1. `twine upload dist/ipug-THE-LATEST-VERSION.{tar.gz, whl}`
 2. or, `twine upload dist/*`
 
 ## Ref.
 - http://otuk.kodeten.com/making-a-python-package-for-pypi---easy-steps/
-
+- [Todo-list](https://hackmd.io/SeYaoagMTkeJEF6LrM6DPw?view)
