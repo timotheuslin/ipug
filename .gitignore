@@ -4,3 +4,4 @@ dist
 ipug.egg-info
 *.pyc
 __pycache__
+.vscode
