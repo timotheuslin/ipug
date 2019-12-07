@@ -1,7 +1,9 @@
-.tox
-build
-dist
-ipug.egg-info
 *.pyc
-__pycache__
-.vscode
+.tox/
+dist/
+build/
+.vscode/
+__pycache__/
+ipug.egg-info/
+
+

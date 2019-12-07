@@ -372,11 +372,10 @@ def setup_codetree(codetree):
                 return r
             subm_init = ' --init '
         pwdpopd(local_dir)
-        r = run(['git', 'pull', nsource_url], local_dir, verbose=True)
+        r = run(['git', 'fetch', '--tags', '--all'], local_dir, verbose=True)
         pwdpopd()
         if r[0]:
             return r
-        
         r = run(['git', 'checkout', nsource_signature], local_dir, verbose=True)
         if r[0]:
             return r
