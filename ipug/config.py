@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name, line-too-long, too-many-nested-blocks, too-many-branches, too-many-locals
 #
-# (c) 2019 Timothy Lin <timothy.gh.lin@gmail.com>, BSD 3-Clause License.
+# (c) 2019-2020 Timothy Lin <timothy.gh.lin@gmail.com>, BSD 3-Clause License.
 #
 
 """
@@ -18,7 +18,7 @@ sys.dont_write_bytecode = True      # To inhibit the creation of .pyc file
 
 DEFAULT_GCC_TAG = 'GCC5'
 DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', 'edk2'))
-DEFAULT_EDK2_TAG = os.environ.get('EDK2_TAG', 'edk2-stable201905')
+DEFAULT_EDK2_TAG = os.environ.get('EDK2_TAG', 'edk2-stable201911')
 DEFAULT_MSVC_TAG = os.environ.get('MSVC_TAG', 'VS2012x86')
 DEFAULT_EDK2_REPO = os.environ.get('EDK2_REPO', 'https://github.com/tianocore/edk2.git')
 DEFAULT_XCODE_TAG = 'XCODE5'
@@ -80,7 +80,7 @@ CODETREE = {
         },
         'recursive'     : True,
         'multiworkspace': True,
-    }
+    },
 }
 CODETREE['edk2']['path'] = DEFAULT_UDK_DIR
 if DEFAULT_PATH_APPEND_SIGNATURE and CODETREE['edk2']['source'].get('signature', ''):
