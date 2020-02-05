@@ -5,7 +5,7 @@ A front-end to build the UDK driver(s) with only .C source files and a .PY as th
 (c) 2019-2020 Timothy Lin <timothy.gh.lin@gmail.com>, BSD 3-Clause License."""
 
 __author__ = 'Timothy Lin (timothy.gh.lin@gmail.com)'
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 if __name__ == '__main__':
     print('Bow-wo!')
