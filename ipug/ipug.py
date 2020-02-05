@@ -52,7 +52,7 @@ from ipug import config
 
 sys.dont_write_bytecode = True      # To inhibit the creation of .pyc file
 
-VERBOSE_LEVEL = 1
+VERBOSE_LEVEL = 2
 UDKBUILD_MAKETOOL = 'nmake' if (os.name == 'nt') else 'make'
 UDKBUILD_COMMAND_JOINTER = '&' if (os.name == 'nt') else ';'
 
@@ -122,13 +122,14 @@ def conf_files(files, dest_conf_dir, verbose=False):
     if not os.path.exists(dest_conf_dir):
         os.makedirs(dest_conf_dir)
     os.environ['CONF_PATH'] = dest_conf_dir
-    src_conf_dir = os.path.join(os.environ.get('EDK_TOOLS_PATH', os.path.join(os.environ['WORKSPACE'], 'BaseTools')), 'Conf')
-    for f in files:
-        src_conf_path = os.path.join(src_conf_dir, '%s.template' % f)
-        dest_conf_path = os.path.join(dest_conf_dir, '%s.txt' % f)
-        if verbose:
-            bowwow('Copy %s\nTo   %s' % (src_conf_path, dest_conf_path))
-        shutil.copyfile(src_conf_path, dest_conf_path)
+    if cmd_arg[0] == 'setup':
+        src_conf_dir = os.path.join(os.environ.get('EDK_TOOLS_PATH', os.path.join(os.environ['WORKSPACE'], 'BaseTools')), 'Conf')
+        for f in files:
+            src_conf_path = os.path.join(src_conf_dir, '%s.template' % f)
+            dest_conf_path = os.path.join(dest_conf_dir, '%s.txt' % f)
+            if verbose:
+                bowwow('Copy %s\nTo   %s' % (src_conf_path, dest_conf_path))
+            shutil.copyfile(src_conf_path, dest_conf_path)
 
 
 def gen_section(items, override=None, section='', sep='=', ident=0):
@@ -246,8 +247,8 @@ def print_run_result(r, prompt=''):
 def locate_nasm():
     """Try to locate the nasm's installation directory. For Windows only."""
     for d in [
-            'C:\\Program Files\\NASM\nasm.exe',
-            'C:\\Program Files (x86)\\NASM\nasm.exe',
+            'C:\\Program Files\\NASM\\nasm.exe',
+            'C:\\Program Files (x86)\\NASM\\nasm.exe',
             os.environ.get('LOCALAPPDATA', '') + '\\bin\\NASM\\nasm.exe',
             'C:\\NASM\\nasm.exe',
     ]:
@@ -297,6 +298,7 @@ def setup_env_vars(workspace, codetree):
         nasm_path = locate_nasm()
         if nasm_path:
             env_var('=NASM_PREFIX', nasm_path + os.sep)
+            env_var('*PATH', nasm_path)
         env_var('=PYTHON_COMMAND', 'python')
     env_var('*PATH', '$EDK_TOOLS_PATH_BIN')
     env_var('+PACKAGES_PATH', '$UDK_ABSOLUTE_DIR')
@@ -311,6 +313,9 @@ def setup_env_vars(workspace, codetree):
     bowwow('PACKAGES_PATH  = %s' % os.environ['PACKAGES_PATH'])
     bowwow('EDK_TOOLS_PATH = %s' % os.environ['EDK_TOOLS_PATH'])
     bowwow('CONF_PATH      = %s' % os.environ['CONF_PATH'])
+    if nasm_path:
+        bowwow('NASM_PREFIX    = %s' %  os.environ['NASM_PREFIX'])
+    bowwow('PATH           = %s' % os.environ['PATH'])
 
 
 def build_basetools(verbose=0, cmdx=''):
@@ -481,7 +486,8 @@ def build():
 
     setup_env_vars(workspace, config.CODETREE)
     conf_files(['build_rule', 'tools_def', 'target'], config.WORKSPACE['conf_path'], VERBOSE_LEVEL > 1)
-    gen_target_txt(config.TARGET_TXT)
+    if cmd_arg[0] == 'setup':
+        gen_target_txt(config.TARGET_TXT)
 
     if cmd_arg[0] in {'setup', 'cleanall'}:
         r = build_basetools(VERBOSE_LEVEL > 1, cmd_arg[0])
