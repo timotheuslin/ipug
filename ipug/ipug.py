@@ -291,6 +291,7 @@ def setup_env_vars(workspace, codetree):
     env_var('=PYTHONPATH', os.path.join(os.environ['EDK_TOOLS_PATH'], 'Source', 'Python'))
     env_var('=EDK_TOOLS_PATH_BIN', os.path.join(os.environ['EDK_TOOLS_PATH'], 'BinWrappers', 'WindowsLike' if os.name == 'nt' else 'PosixLike'))
 
+    nasm_path = ''
     if os.name == 'nt':
         env_var('*PATH', os.path.join(os.environ['EDK_TOOLS_PATH'], 'Bin', 'Win32'))
         env_var('=PYTHON_HOME', os.path.dirname(sys.executable))
