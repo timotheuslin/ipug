@@ -10,7 +10,7 @@ This is a Python/Pypi package.
 1. ...
 2. `edit tox.ini`
 3. `update the (version) content of setup.py, setup.cfg, __init__.py`
-4. `run tox .`
+4. run `tox .`
 5. `pip install . --user --upgrade` and test ipug on a unit-test project.
 5. `python setup.py sdist bdist_wheel`
 6. `pip install --user dist/ipug-THE-LATEST-VERSION.tar.gz` e.g. `pip install --user dist/ipug-0.2.1.tar.gz`

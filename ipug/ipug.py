@@ -38,7 +38,7 @@ TODO:
 from __future__ import print_function
 from __future__ import absolute_import
 
-__all__ = ['build', 'build_basetools', 'run', 'setup_codetree']
+__all__ = ['build', 'build_basetools', 'run', 'setup_codetree', 'main']
 
 import os
 import sys
@@ -48,11 +48,11 @@ import threading
 import subprocess
 import multiprocessing
 
-from ipug import config
+from ipug import config             # Invoke config.py in the same folder
 
 sys.dont_write_bytecode = True      # To inhibit the creation of .pyc file
 
-VERBOSE_LEVEL = 2
+VERBOSE_LEVEL = config.VERBOSE_LEVEL
 UDKBUILD_MAKETOOL = 'nmake' if (os.name == 'nt') else 'make'
 UDKBUILD_COMMAND_JOINTER = '&' if (os.name == 'nt') else ';'
 

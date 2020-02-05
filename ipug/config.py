@@ -9,12 +9,13 @@
 The basic/default configuration file for PUG.
 """
 
-__all__ = ['WORKSPACE', 'CODETREE', 'TARGET_TXT', 'PLATFORM', 'COMPONENT']
+__all__ = ['WORKSPACE', 'CODETREE', 'TARGET_TXT', 'PLATFORM', 'COMPONENT', 'VERBOSE_LEVEL']
 
 import os
 import sys
 
 sys.dont_write_bytecode = True      # To inhibit the creation of .pyc file
+VERBOSE_LEVEL = 2
 
 DEFAULT_GCC_TAG = 'GCC5'
 DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', 'edk2'))
@@ -54,8 +55,11 @@ try:
         if not dv.startswith('DEFAULT_'):
             continue
         locals()[dv] = getattr(project, dv)
+        if VERBOSE_LEVEL > 1:
+            print('Project: %s - [%s]' % (dv, locals()[dv]))
 except ImportError:
-    # print('Ingore missing project.py.')
+    if VERBOSE_LEVEL > 1:
+        print('Ingore the missing project.py in %s.' % str(sys.path))
     pass
 sys.path = ORIGINAL_SYS_PATH
 
@@ -70,6 +74,8 @@ WORKSPACE = {
 
 WORKSPACE['conf_path'] = os.environ.get('CONF_PATH', os.path.join(WORKSPACE['path'], 'Build', 'Conf'))
 
+if VERBOSE_LEVEL > 1:
+    print('WORKSPACE: %s' % str(WORKSPACE))
 
 # Code tree layout for those remote repository(-ies).
 CODETREE = {
@@ -101,7 +107,6 @@ try:
     TARGET_TXT['ACTIVE_PLATFORM'] = getattr(PLATFORM, 'path', '')
 except NameError:
     pass
-
 
 for c in pCODETREE:
     CODETREE[c] = pCODETREE[c]
