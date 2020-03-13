@@ -12,4 +12,4 @@ __version__ = '0.2.1'
 main = main
 
 if __name__ == '__main__':
-    print('Bow-wo!')
+    print('Bow-wow!')

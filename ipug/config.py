@@ -18,9 +18,9 @@ sys.dont_write_bytecode = True      # To inhibit the creation of .pyc file
 VERBOSE_LEVEL = 2
 
 DEFAULT_GCC_TAG = 'GCC5'
-DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', 'edk2'))
 DEFAULT_EDK2_TAG = os.environ.get('EDK2_TAG', 'edk2-stable201911')
-DEFAULT_MSVC_TAG = os.environ.get('MSVC_TAG', 'VS2012x86')
+DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', DEFAULT_EDK2_TAG))
+DEFAULT_MSVC_TAG = os.environ.get('MSVC_TAG', 'VS2017')
 DEFAULT_EDK2_REPO = os.environ.get('EDK2_REPO', 'https://github.com/tianocore/edk2.git')
 DEFAULT_XCODE_TAG = 'XCODE5'
 DEFAULT_TARGET_ARCH = os.environ.get('TARGET_ARCH', 'X64')              # 'IA32', 'X64', 'IA32 X64'
@@ -74,9 +74,6 @@ WORKSPACE = {
 
 WORKSPACE['conf_path'] = os.environ.get('CONF_PATH', os.path.join(WORKSPACE['path'], 'Build', 'Conf'))
 
-if VERBOSE_LEVEL > 1:
-    print('WORKSPACE: %s' % str(WORKSPACE))
-
 # Code tree layout for those remote repository(-ies).
 CODETREE = {
     'edk2'              : {
@@ -118,3 +115,11 @@ for c in pCOMPONENT:
     COMPONENT[c] = pCOMPONENT[c]
 for c in pTARGET_TXT:
     TARGET_TXT[c] = pTARGET_TXT[c]
+
+if VERBOSE_LEVEL > 1:
+    print('WORKSPACE: %s' % str(WORKSPACE))
+    print('CODETREE: %s' % str(CODETREE))
+    print('TARGET_TXT: %s' % str(TARGET_TXT))
+    print('PLATFORM: %s' % str(PLATFORM))
+    print('COMPONENT: %s' % str(COMPONENT))
+

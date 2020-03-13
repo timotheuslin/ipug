@@ -11,8 +11,8 @@ A front-end to build the UDK driver(s) with only .C source files and a .PY as th
 (c) 2019-2020 Timothy Lin <timothy.gh.lin@gmail.com>, BSD 3-Clause License.
 
 Prerequisites:
-1. Python 2.7.10+ or Python 3.7.0+
-2. git 2.19.0+
+1. Python 3.7.0+
+2. git 2.25.0+
 
 Generic prerequisites for the UDK build:
 0. Ref. https://github.com/tianocore/tianocore.github.io/wiki/Getting%20Started%20with%20EDK%20II
@@ -21,7 +21,7 @@ Generic prerequisites for the UDK build:
 2. iasl (version 2018xxxx or later)
 3. GCC(Posix) or MSVC(Windows)
 4. build-essential uuid-dev (Posix)
-5. pip2 install future (Python 2.7.x)
+5. py -3 pip install future
 6. motc (Xcode)
 
 Tool installation for any Debian Based Linux:
@@ -300,7 +300,7 @@ def setup_env_vars(workspace, codetree):
         if nasm_path:
             env_var('=NASM_PREFIX', nasm_path + os.sep)
             env_var('*PATH', nasm_path)
-        env_var('=PYTHON_COMMAND', 'python')
+        env_var('=PYTHON_COMMAND', '"%s"' % sys.executable)
     env_var('*PATH', '$EDK_TOOLS_PATH_BIN')
     env_var('+PACKAGES_PATH', '$UDK_ABSOLUTE_DIR')
     env_var('+PACKAGES_PATH', os.getcwd())
@@ -310,13 +310,16 @@ def setup_env_vars(workspace, codetree):
         if codetree[c].get('multiworkspace', False):
             env_var('+PACKAGES_PATH', codetree[c]['path'])
 
-    bowwow('WORKSPACE      = %s' % os.environ['WORKSPACE'])
-    bowwow('PACKAGES_PATH  = %s' % os.environ['PACKAGES_PATH'])
-    bowwow('EDK_TOOLS_PATH = %s' % os.environ['EDK_TOOLS_PATH'])
-    bowwow('CONF_PATH      = %s' % os.environ['CONF_PATH'])
-    if nasm_path:
-        bowwow('NASM_PREFIX    = %s' %  os.environ['NASM_PREFIX'])
-    bowwow('PATH           = %s' % os.environ['PATH'])
+    bowwow('%-16s = %s' % ('WORKSPACE', os.environ['WORKSPACE']))
+    bowwow('%-16s = %s' % ('PACKAGES_PATH', os.environ['PACKAGES_PATH']))
+    bowwow('%-16s = %s' % ('EDK_TOOLS_PATH', os.environ['EDK_TOOLS_PATH']))
+    bowwow('%-16s = %s' % ('CONF_PATH', os.environ['CONF_PATH']))
+    bowwow('%-16s = %s' % ('UDK_ABSOLUTE_DIR', os.environ['UDK_ABSOLUTE_DIR']))
+    if os.name == 'nt':
+        bowwow('%-16s = %s' % ('PYTHON_COMMAND', os.environ['PYTHON_COMMAND']))
+        if nasm_path:
+            bowwow('%-16s = %s' % ('NASM_PREFIX', os.environ['NASM_PREFIX']))
+    bowwow('%-16s = %s' % ('PATH', os.environ['PATH']))
 
 
 def build_basetools(verbose=0, cmdx=''):
@@ -506,7 +509,9 @@ def build():
     cmds = []
     if os.name == 'nt':
         cmds += [
-            os.path.join(os.environ['EDK_TOOLS_PATH'], 'set_vsprefix_envs.bat'), UDKBUILD_COMMAND_JOINTER,
+            #os.path.join(os.environ['EDK_TOOLS_PATH'], 'set_vsprefix_envs.bat'), UDKBUILD_COMMAND_JOINTER,
+            os.path.join(os.environ['EDK_TOOLS_PATH'], 'toolsetup.bat'), UDKBUILD_COMMAND_JOINTER,
+            
         ]
     cmds += [
         'build',
