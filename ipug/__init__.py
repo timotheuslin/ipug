@@ -7,7 +7,7 @@ A front-end to build the UDK driver(s) with only .C source files and a .PY as th
 from .ipug import main
 
 __author__ = 'Timothy Lin (timothy.gh.lin@gmail.com)'
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 main = main
 

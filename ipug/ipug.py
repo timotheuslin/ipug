@@ -376,21 +376,22 @@ def setup_codetree(codetree):
         if not nsource_signature:
             nsource_signature = 'master'
         subm_init = ''
+        recurse_submodule = '--recurse-submodules' if node.get('recursive', '') else '';
         if not os.path.exists(dot_git):
-            r = run(['git', 'clone', nsource_url, local_dir], local_dir, verbose=True)
+            r = run(['git', 'clone', recurse_submodule, nsource_url, local_dir], local_dir, verbose=True)
             if r[0]:
                 return r
             subm_init = ' --init '
         pwdpopd(local_dir)
-        r = run(['git', 'fetch', '--tags', '--all'], local_dir, verbose=True)
+        r = run(['git', 'fetch', '--tags', '--all', recurse_submodule], local_dir, verbose=True)
         pwdpopd()
         if r[0]:
             return r
-        r = run(['git', 'checkout', nsource_signature], local_dir, verbose=True)
+        r = run(['git', 'checkout', recurse_submodule, nsource_signature], local_dir, verbose=True)
         if r[0]:
             return r
-        if node.get('recursive', ''):
-            r = run(['git', 'submodule update %s --recursive' % subm_init], local_dir, verbose=True)
+        #if node.get('recursive', ''):
+        #    r = run(['git', 'submodule update %s --recursive' % subm_init], local_dir, verbose=True)
         return r
 
     r0, r1, r2 = _get_code(codetree['edk2'])
