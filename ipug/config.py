@@ -18,7 +18,7 @@ sys.dont_write_bytecode = True      # To inhibit the creation of .pyc file
 VERBOSE_LEVEL = 2
 
 DEFAULT_GCC_TAG = 'GCC5'
-DEFAULT_EDK2_TAG = os.environ.get('EDK2_TAG', 'edk2-stable201911')
+DEFAULT_EDK2_TAG = os.environ.get('EDK2_TAG', 'edk2-stable201908')
 DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', DEFAULT_EDK2_TAG))
 DEFAULT_MSVC_TAG = os.environ.get('MSVC_TAG', 'VS2017')
 DEFAULT_EDK2_REPO = os.environ.get('EDK2_REPO', 'https://github.com/tianocore/edk2.git')
@@ -26,7 +26,9 @@ DEFAULT_XCODE_TAG = 'XCODE5'
 DEFAULT_TARGET_ARCH = os.environ.get('TARGET_ARCH', 'X64')              # 'IA32', 'X64', 'IA32 X64'
 DEFAULT_BUILD_TARGET = os.environ.get('BUILD_TARGET', 'RELEASE')        # 'DEBUG', 'NOOPT', 'RELEASE', 'RELEASE DEBUG'
 DEFAULT_WORKSPACE_DIR = os.environ.get('WORKSPACE', os.getcwd())
+DEFAULT_PLATFORM_PACKAGE_DSC = ''
 DEFAULT_PATH_APPEND_SIGNATURE = False
+
 
 CODETREE = {}
 PLATFORM = {}
@@ -62,6 +64,9 @@ except ImportError:
         print('Ingore the missing project.py in %s.' % str(sys.path))
     pass
 sys.path = ORIGINAL_SYS_PATH
+
+# update the setting after project.py is loaded.
+DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', DEFAULT_EDK2_TAG))
 
 
 # Basic global settings of WORKSPACE. Any relative-path is relative to the WORKSPACE-dir.

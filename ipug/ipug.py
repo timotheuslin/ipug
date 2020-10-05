@@ -21,7 +21,8 @@ Generic prerequisites for the UDK build:
 2. iasl (version 2018xxxx or later)
 3. GCC(Posix) or MSVC(Windows)
 4. build-essential uuid-dev (Posix)
-5. py -3 pip install future
+5. py -3 -m pip install future (Windows)
+   python3 -m pip install future
 6. motc (Xcode)
 
 Tool installation for any Debian Based Linux:
@@ -372,26 +373,34 @@ def setup_codetree(codetree):
         nsource_url = nsource.get('url', None)
         if nsource_url is None:
             return r
-        nsource_signature = nsource.get('signature', 'master')
+
+        nsource_signature = nsource.get('signature', '')
         if not nsource_signature:
             nsource_signature = 'master'
-        subm_init = ''
-        recurse_submodule = '--recurse-submodules' if node.get('recursive', '') else '';
+            branch_sig = []
+        else:
+            branch_sig = ['-b', nsource_signature]
+
+        recurse_submodule = '--recurse-submodules' if node.get('recursive', '') else ''
+        new_clone = False
         if not os.path.exists(dot_git):
-            r = run(['git', 'clone', recurse_submodule, nsource_url, local_dir], local_dir, verbose=True)
+            r = run(['git', 'clone', recurse_submodule, nsource_url, local_dir] + branch_sig, local_dir, verbose=True)
             if r[0]:
                 return r
-            subm_init = ' --init '
-        pwdpopd(local_dir)
-        r = run(['git', 'fetch', '--tags', '--all', recurse_submodule], local_dir, verbose=True)
-        pwdpopd()
-        if r[0]:
-            return r
-        r = run(['git', 'checkout', recurse_submodule, nsource_signature], local_dir, verbose=True)
-        if r[0]:
-            return r
-        #if node.get('recursive', ''):
-        #    r = run(['git', 'submodule update %s --recursive' % subm_init], local_dir, verbose=True)
+            new_clone = True
+        else:
+            pwdpopd(local_dir)
+            r = run(['git', 'fetch', '--tags', '--all', recurse_submodule], local_dir, verbose=True)
+            pwdpopd()
+            if r[0]:
+                return r
+            r = run(['git', 'checkout', nsource_signature], local_dir, verbose=True)
+            if r[0]:
+                return r
+        if node.get('recursive', ''):
+            if not new_clone:
+                r = run(['git', 'submodule sync --recursive'], local_dir, verbose=True)
+            r = run(['git', 'submodule update --recursive'], local_dir, verbose=True)
         return r
 
     r0, r1, r2 = _get_code(codetree['edk2'])
