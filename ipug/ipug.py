@@ -529,6 +529,17 @@ def build():
         '-N',                                       # -N, --no-cache        Disable build cache mechanism
     ]
 
+    ppdsc = ''
+    try:
+        ppdsc = config.DEFAULT_PLATFORM_PACKAGE_DSC
+        ppdsc = config.PLATFORM_PACKAGE_DSC
+    except AttributeError:
+        pass
+    if ppdsc:
+        cmds += [
+            '-p', ppdsc
+        ]
+
     if cmd_arg[0] in {'build', 'clean', 'cleanall'}:
         cmds += sys.argv[1:]
         r = run(cmds, os.environ['WORKSPACE'], verbose=VERBOSE_LEVEL)

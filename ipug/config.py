@@ -53,6 +53,8 @@ try:
     pWORKSPACE = getattr(project, 'WORKSPACE', {})
     pCOMPONENT = getattr(project, 'COMPONENT', {})
     pTARGET_TXT = getattr(project, 'TARGET_TXT', {})
+
+    # TODO: Finally, all the all-capitalized symbols should be merged from project.py.
     for dv in dir(project):
         if not dv.startswith('DEFAULT_'):
             continue
@@ -110,6 +112,12 @@ try:
 except NameError:
     pass
 
+try:
+    if PLATFORM_PACKAGE_DSC:
+        pass
+except NameError:
+    PLATFORM_PACKAGE_DSC = DEFAULT_PLATFORM_PACKAGE_DSC
+
 for c in pCODETREE:
     CODETREE[c] = pCODETREE[c]
 for c in pPLATFORM:
@@ -127,4 +135,6 @@ if VERBOSE_LEVEL > 1:
     print('TARGET_TXT: %s' % str(TARGET_TXT))
     print('PLATFORM: %s' % str(PLATFORM))
     print('COMPONENT: %s' % str(COMPONENT))
+    print('PLATFORM_PACKAGE_DSC: %s' % PLATFORM_PACKAGE_DSC)
+    
 
