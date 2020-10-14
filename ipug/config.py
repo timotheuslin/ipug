@@ -44,6 +44,7 @@ pCOMPONENT = {}
 pTARGET_TXT = {}
 
 ORIGINAL_SYS_PATH = sys.path[:]
+customized_settings = set()
 try:
     sys.path = [os.getcwd()] + sys.path
     # WARNING: Here is actually a potential vulnerability with unbounded privilege propagation when importing a local python file.
@@ -55,10 +56,13 @@ try:
     pTARGET_TXT = getattr(project, 'TARGET_TXT', {})
 
     # TODO: Finally, all the all-capitalized symbols should be merged from project.py.
+    # BUGBUG: any "DEFAULT_" symbol from project.py not in this config.py should be an error. (strict mode)
     for dv in dir(project):
         if not dv.startswith('DEFAULT_'):
             continue
+
         locals()[dv] = getattr(project, dv)
+        customized_settings.add(dv)
         if VERBOSE_LEVEL > 1:
             print('Project: %s - [%s]' % (dv, locals()[dv]))
 except ImportError:
@@ -68,7 +72,8 @@ except ImportError:
 sys.path = ORIGINAL_SYS_PATH
 
 # update the setting after project.py is loaded.
-DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', DEFAULT_EDK2_TAG))
+if (DEFAULT_UDK_DIR not in customized_settings) and (DEFAULT_EDK2_TAG in customized_settings):
+    DEFAULT_UDK_DIR = os.environ.get('UDK_DIR', os.path.join(os.path.expanduser('~'), '.cache', 'pug', DEFAULT_EDK2_TAG))
 
 
 # Basic global settings of WORKSPACE. Any relative-path is relative to the WORKSPACE-dir.
