@@ -518,7 +518,9 @@ def build():
         gen_target_txt(config.TARGET_TXT)
 
     if cmd_arg[0] in {'init-basetools', 'cleanall'}:
-        return build_basetools(VERBOSE_LEVEL > 1, cmd_arg[0])
+        r = build_basetools(VERBOSE_LEVEL > 1, cmd_arg[0])
+        if cmd_arg[0] == 'init-basetools':
+            return r
 
     cPlatform = getattr(config, 'PLATFORM', None)
     cComponent = getattr(config, 'COMPONENT', None)
@@ -536,7 +538,7 @@ def build():
     else:
         if cmd_arg[0] not in {'build'}:
             build_basetools(VERBOSE_LEVEL > 1, cmd_arg[0])
-        #Ignore the failure quietly. Let the UDK's build flow control the failure.
+            #Ignore the failure quietly. Let the UDK's build flow control the failure.
 
         cmds = []
         if os.name == 'nt':
