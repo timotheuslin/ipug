@@ -123,7 +123,7 @@ def conf_files(files, dest_conf_dir, verbose=False):
     if not os.path.exists(dest_conf_dir):
         os.makedirs(dest_conf_dir)
     os.environ['CONF_PATH'] = dest_conf_dir
-    if cmd_arg[0] == 'setup':
+    if cmd_arg[0] in {'setup', 'init'}:
         src_conf_dir = os.path.join(os.environ.get('EDK_TOOLS_PATH', os.path.join(os.environ['WORKSPACE'], 'BaseTools')), 'Conf')
         for f in files:
             src_conf_path = os.path.join(src_conf_dir, '%s.template' % f)
@@ -498,7 +498,7 @@ def build():
     workspace = os.path.abspath(config.WORKSPACE['path'])
     # udk_home = os.path.abspath(config.CODETREE['edk2']['path'])
 
-    if cmd_arg[0] == 'setup':
+    if cmd_arg[0] in {'setup', 'init'}:
         r = setup_codetree(config.CODETREE)
         if r:
             bowwow('setup_codetree(0) returns: %s' % str(r))
@@ -514,50 +514,56 @@ def build():
 
     setup_env_vars(workspace, config.CODETREE)
     conf_files(['build_rule', 'tools_def', 'target'], config.WORKSPACE['conf_path'], VERBOSE_LEVEL > 1)
-    if cmd_arg[0] == 'setup':
+    if cmd_arg[0] in {'setup', 'init'}:
         gen_target_txt(config.TARGET_TXT)
 
-    if cmd_arg[0] in {'setup', 'cleanall'}:
-        r = build_basetools(VERBOSE_LEVEL > 1, cmd_arg[0])
-        if r:
-            return r
+    if cmd_arg[0] in {'init-basetools', 'cleanall'}:
+        return build_basetools(VERBOSE_LEVEL > 1, cmd_arg[0])
 
     cPlatform = getattr(config, 'PLATFORM', None)
     cComponent = getattr(config, 'COMPONENT', None)
-    if cmd_arg[0] == 'setup':
+    if cmd_arg[0] in {'setup', 'init'}:
         if cPlatform and cComponent:
             platform_dsc(cPlatform, cComponent, workspace)
         if cComponent:
             component_inf(cComponent, workspace)
 
-    cmds = []
-    if os.name == 'nt':
-        cmds += [
-            #os.path.join(os.environ['EDK_TOOLS_PATH'], 'set_vsprefix_envs.bat'), UDKBUILD_COMMAND_JOINTER,
-            os.path.join(os.environ['EDK_TOOLS_PATH'], 'toolsetup.bat'), UDKBUILD_COMMAND_JOINTER,
-            
-        ]
-    cmds += [
-        'build',
-        '-n', '%d' % multiprocessing.cpu_count(),
-        '-N',                                       # -N, --no-cache        Disable build cache mechanism
-    ]
-
-    ppdsc = ''
-    try:
-        ppdsc = config.DEFAULT_PLATFORM_PACKAGE_DSC
-        ppdsc = config.PLATFORM_PACKAGE_DSC
-    except AttributeError:
-        pass
-    if ppdsc:
-        cmds += [
-            '-p', ppdsc
-        ]
-
-    if cmd_arg[0] in {'build', 'clean', 'cleanall'}:
-        cmds += sys.argv[1:]
+    # Run the customized "build" command or the default one to build the code base.
+    if config.DEFAULT_BUILD_COMMAND:
+        cmds = [config.DEFAULT_BUILD_COMMAND] + sys.argv[1:]
         r = run(cmds, os.environ['WORKSPACE'], verbose=VERBOSE_LEVEL)
         return print_run_result(r, 'build(): ')
+    else:
+        if cmd_arg[0] not in {'build'}:
+            build_basetools(VERBOSE_LEVEL > 1, cmd_arg[0])
+        #Ignore the failure quietly. Let the UDK's build flow control the failure.
+
+        cmds = []
+        if os.name == 'nt':
+            cmds += [
+                os.path.join(os.environ['EDK_TOOLS_PATH'], 'toolsetup.bat'), UDKBUILD_COMMAND_JOINTER,
+            ]
+        cmds += [
+            'build',
+            '-n', '%d' % multiprocessing.cpu_count(),
+            '-N',                                       # -N, --no-cache        Disable build cache mechanism
+        ]
+
+        ppdsc = ''
+        try:
+            ppdsc = config.DEFAULT_PLATFORM_PACKAGE_DSC
+            ppdsc = config.PLATFORM_PACKAGE_DSC
+        except AttributeError:
+            pass
+        if ppdsc:
+            cmds += [
+                '-p', ppdsc
+            ]
+
+        if cmd_arg[0] in {'build', 'clean', 'cleanall'}:
+            cmds += sys.argv[1:]
+            r = run(cmds, os.environ['WORKSPACE'], verbose=VERBOSE_LEVEL)
+            return print_run_result(r, 'build(): ')
 
     return 0
 
@@ -569,13 +575,13 @@ def main():
     if len(sys.argv) == 1:
         cmd_arg[0] = 'build'
     else:
-        if sys.argv[1] in {'setup', 'update', 'build'}:
+        if sys.argv[1] in {'setup', 'update', 'build', 'init', 'init-basetools'}:
             cmd_arg[0] = sys.argv.pop(1)
         elif sys.argv[1] in {'clean', 'cleanall'}:
             cmd_arg[0] = sys.argv[1]
             #sys.argv.pop(1)
         elif sys.argv[1][0] not in {'/', '-'}:
-            print('Usage: ipug [setup/update/build/clean/cleanall/help]')
+            print('Usage: ipug [setup/update/build/clean/cleanall/init-basetools/help]')
             return 0
         else:
             cmd_arg[0] = 'build'
