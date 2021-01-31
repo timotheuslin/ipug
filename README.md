@@ -1,11 +1,11 @@
-
-pug
+PUG
 ==
-**Pug, the Udk Guidedog** that 
-1. reduces the code maintenance complexity and
-2.  simplifies the build process of UDK.
 
-This is a Python/Pypi package.
+**Pug, the Uefi Guidedog** that 
+1. reduces the code maintenance complexity and
+2. simplifies the build process of the UEFI EDK2 code.
+
+This is a Python/PyPI package.
 
 
 ## Ref.
