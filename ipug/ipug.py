@@ -334,7 +334,7 @@ def setup_env_vars(workspace, codetree):
 
 def build_basetools(cmd=''):
     """build the C-Lang executable binaries in BaseTools."""
-    if cmd == ['build', 'clean']:
+    if cmd[:2] == ['build', 'clean']:
         return 0
     home_dir = os.environ['EDK_TOOLS_PATH']
     cmds = [UDKBUILD_MAKETOOL]
@@ -343,7 +343,7 @@ def build_basetools(cmd=''):
         cmds += [
             '--jobs', '%d' % multiprocessing.cpu_count()
         ]
-    if (cmd[0] == 'clean-basetools') or (cmd == ['build', 'cleanall']):
+    if (cmd[0] == 'clean-basetools') or (cmd[:2] == ['build', 'cleanall']):
         cmds += ['clean']
 
     r = run(cmds, home_dir)
