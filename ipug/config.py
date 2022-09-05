@@ -101,6 +101,8 @@ CODETREE = {
         },
         'recursive'     : True,
         'multiworkspace': True,
+        'git.clone.arguments' : '--depth=1',
+        'git.fetch.arguments' : '--depth=1',
     },
 }
 CODETREE['edk2']['path'] = DEFAULT_UDK_DIR

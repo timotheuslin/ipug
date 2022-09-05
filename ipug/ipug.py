@@ -17,12 +17,11 @@ Prerequisites:
 Generic prerequisites for the UEFI build:
 0. Ref. https://github.com/tianocore/tianocore.github.io/wiki/Getting%20Started%20with%20EDK%20II
         Xcode: https://github.com/tianocore/tianocore.github.io/wiki/Xcode
-1. nasm (2.0 or above)
-2. iasl (version 2018xxxx or later)
-3. GCC(Posix) or MSVC(Windows)
+1. nasm (2.15+)
+2. iasl (version 2020xxxx or later)
+3. GCC 10+(Posix) or MSVC 2017+(Windows)
 4. build-essential uuid-dev (Posix)
-5. py -3 -m pip install future (Windows)
-   python3 -m pip install future
+5. py -3 -m pip install future (Windows, python2.7 only)
 6. motc (Xcode)
 
 Tool installation for any Debian Based Linux:
@@ -408,23 +407,27 @@ def setup_codetree(codetree):
                 return r
         elif nsource_url:
             if not os.path.exists(dot_git):
-                r = run(['git', 'clone', recurse_submodule, nsource_url, local_dir] + branch_sig, local_dir, verbose=True)
+                clone_arguments = node.get('git.clone.arguments', '')
+                r = run(['git', 'clone', clone_arguments, recurse_submodule, nsource_url, local_dir] + branch_sig, local_dir, verbose=True)
                 if r[0]:
                     return r
                 new_clone = True
             else:
                 pwdpopd(local_dir)
-                r = run(['git', 'fetch', '--tags', '--all', recurse_submodule], local_dir, verbose=True)
+                fetch_arguments = node.get('git.fetch.arguments', '')
+                r = run(['git', 'fetch', '--tags', '--all', fetch_arguments, recurse_submodule], local_dir, verbose=True)
                 pwdpopd()
                 if r[0]:
                     return r
-                r = run(['git', 'checkout', nsource_signature], local_dir, verbose=True)
+                checkout_arguments = node.get('git.checkout.arguments', '')
+                r = run(['git', 'checkout', checkout_arguments, nsource_signature], local_dir, verbose=True)
                 if r[0]:
                     return r
             if node.get('recursive', ''):
+                submodule_arguments = node.get('git.submodule.arguments', '')
                 if not new_clone:
-                    r = run(['git', 'submodule sync --recursive'], local_dir, verbose=True)
-                r = run(['git', 'submodule update --recursive'], local_dir, verbose=True)
+                    r = run(['git', 'submodule sync --recursive', submodule_arguments], local_dir, verbose=True)
+                r = run(['git', 'submodule update --recursive', submodule_arguments], local_dir, verbose=True)
         return r
 
     r0, r1, r2 = _get_code(codetree['edk2'])
@@ -525,8 +528,8 @@ def build(cmd_arg):
     # 2. setup the THREE basic text files for the EDK2 build.
     setup_env_vars(workspace, config.CODETREE)
     conf_files(['build_rule', 'tools_def', 'target'], config.WORKSPACE['conf_path'], cmd_arg)
-    if cmd_arg[0] in {'setup', 'init'}:
-        gen_target_txt(config.TARGET_TXT)
+    #if cmd_arg[0] in {'setup', 'init'}:
+    gen_target_txt(config.TARGET_TXT)
 
     # 2.1 dump the essential environment variables when requested.
     if '--pug:environ' in cmd_arg[2]:
@@ -669,3 +672,4 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+
