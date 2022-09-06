@@ -402,7 +402,7 @@ def setup_codetree(codetree):
                     if r[0]:
                         break
             else:
-                pass # TODO: this should be an error
+                pass    # TODO: this should be an error
             if r[0]:
                 return r
         elif nsource_url:
@@ -528,7 +528,6 @@ def build(cmd_arg):
     # 2. setup the THREE basic text files for the EDK2 build.
     setup_env_vars(workspace, config.CODETREE)
     conf_files(['build_rule', 'tools_def', 'target'], config.WORKSPACE['conf_path'], cmd_arg)
-    #if cmd_arg[0] in {'setup', 'init'}:
     gen_target_txt(config.TARGET_TXT)
 
     # 2.1 dump the essential environment variables when requested.
@@ -639,7 +638,7 @@ def main():
             sys.argv.remove('--pug:config')
 
         if '--pug:environ' in sys.argv[1:]:
-#            bowwow(config.dump_env_vars(), 3, no_clobber=True)
+            # bowwow(config.dump_env_vars(), 3, no_clobber=True)
             cmd_arg[2].add('--pug:environ')
             sys.argv.remove('--pug:environ')
 
